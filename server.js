@@ -28,18 +28,19 @@ const db = mysql.createConnection({
   user: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
-  port: process.env.MYSQL_PORT
+  port: process.env.MYSQL_PORT,
+  connectTimeout: 10000 // Increase timeout to 10 seconds
 });
 
-// MYSQL_DATABASE="railway"
-// MYSQL_PUBLIC_URL="mysql://${{MYSQLUSER}}:${{MYSQL_ROOT_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}/${{MYSQL_DATABASE}}"
-// MYSQL_ROOT_PASSWORD="eGQvLvPMzqWhsFnZOFGYkAKXwlKwADdq"
-// MYSQL_URL="mysql://${{MYSQLUSER}}:${{MYSQL_ROOT_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:3306/${{MYSQL_DATABASE}}"
-// MYSQLDATABASE="${{MYSQL_DATABASE}}"
-// MYSQLHOST="${{RAILWAY_PRIVATE_DOMAIN}}"
-// MYSQLPASSWORD="${{MYSQL_ROOT_PASSWORD}}"
-// MYSQLPORT="3306"
-// MYSQLUSER="root"
+
+
+// Use your Railway MySQL URL if you are connecting to the Railway database
+// const db = mysql.createConnection({
+//     host: 'your-railway-host', 
+//     user: 'your-railway-user', 
+//     password: 'your-railway-password', 
+//     database: 'your-railway-database'
+// });
 
 db.connect(err => {
   if (err) {
@@ -52,7 +53,7 @@ db.connect(err => {
 // Register new user with profile image
 app.post('/register', upload.single('profileimage'), (req, res) => {
   console.log(req.body);
-    console.log(req.file);
+  console.log(req.file);
   const { firstName, lastName, age, address, city, country, postcode, mobile, email, occupation } = req.body;
   const profileImage = req.file ? req.file.path : 'img/userfind.png'; // Default image if no file is uploaded
 
@@ -133,5 +134,5 @@ app.get('/drivers/:id', (req, res) => {
   });
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
